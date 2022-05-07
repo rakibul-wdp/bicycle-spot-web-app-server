@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 // middleware
@@ -26,6 +26,13 @@ async function run() {
       const cursor = stockCollection.find(query);
       const stocks = await cursor.toArray();
       res.send(stocks);
+    });
+
+    app.get('/stock/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const stock = await stockCollection.findOne(query);
+      res.send(stock);
     });
   } finally {
     // some code that stop this function
