@@ -35,6 +35,15 @@ async function run() {
       res.send(stock);
     });
 
+    // My items collection
+    app.get('/stock', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const cursor = stockCollection.find(query);
+      const items = await cursor.toArray();
+      res.send(items);
+    });
+
     // delete
     app.delete('/stock/:id', async (req, res) => {
       const id = req.params.id;
