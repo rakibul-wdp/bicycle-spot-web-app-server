@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
@@ -20,7 +21,18 @@ async function run() {
   try {
     await client.connect();
     const stockCollection = client.db('bicycleWarehouse').collection('stock');
+    const myItemCollection = client.db('bicycleWarehouse').collection('items');
 
+    // auth
+    app.post('/login', async (req, res) => {
+      const user = req.body;
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '1d',
+      });
+      res.send({ accessToken });
+    });
+
+    // stock api
     app.get('/stock', async (req, res) => {
       const query = {};
       const cursor = stockCollection.find(query);
@@ -36,12 +48,18 @@ async function run() {
     });
 
     // My items collection
-    app.get('/stock', async (req, res) => {
+    app.get('/items', async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const cursor = stockCollection.find(query);
       const items = await cursor.toArray();
       res.send(items);
+    });
+
+    app.post('/items', async (req, res) => {
+      const items = req.body;
+      const result = await myItemCollection.insertOne(items);
+      res.send(result);
     });
 
     // delete
