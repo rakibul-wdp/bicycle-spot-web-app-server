@@ -43,18 +43,25 @@ async function run() {
       res.send(result);
     });
 
+    // post
+    app.post('/stock', async (req, res) => {
+      const newItem = req.body;
+      const result = await stockCollection.insertOne(newItem);
+      res.send(result);
+    });
+
     // update user
     app.put('/stock/:id', async (req, res) => {
       const id = req.params.id;
-      const updateQuantity = req.body;
+      const updatedProduct = req.body;
       const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
-      const updateDoc = {
+      const updatedDoc = {
         $set: {
-          updateQuantity,
+          quantity: updatedProduct.quantity,
         },
       };
-      const result = await stockCollection.updateOne(filter, updateDoc, options);
+      const result = await stockCollection.updateOne(filter, updatedDoc, options);
       res.send(result);
     });
   } finally {
@@ -70,3 +77,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log('Listening to port', port);
 });
+// https://stackoverflow.com/questions/72162289/how-to-update-data-in-mongodb-database-and-show-in-ui
