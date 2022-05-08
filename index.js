@@ -34,6 +34,29 @@ async function run() {
       const stock = await stockCollection.findOne(query);
       res.send(stock);
     });
+
+    // delete
+    app.delete('/stock/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await stockCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // update user
+    app.put('/stock/:id', async (req, res) => {
+      const id = req.params.id;
+      const updateQuantity = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          updateQuantity,
+        },
+      };
+      const result = await stockCollection.updateOne(filter, updateDoc, options);
+      res.send(result);
+    });
   } finally {
     // some code that stop this function
   }
