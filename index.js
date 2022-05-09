@@ -68,7 +68,7 @@ async function run() {
       const email = req.query.email;
       if (email === decodedEmail) {
         const query = { email: email };
-        const cursor = stockCollection.find(query);
+        const cursor = myItemCollection.find(query);
         const items = await cursor.toArray();
         res.send(items);
       } else {
