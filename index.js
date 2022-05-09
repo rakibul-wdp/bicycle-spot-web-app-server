@@ -82,6 +82,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete('/items', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await myItemCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // delete
     app.delete('/stock/:id', async (req, res) => {
       const id = req.params.id;
